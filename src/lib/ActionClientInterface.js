@@ -23,7 +23,7 @@ const EventEmitter = require('events');
 let GoalID = null;
 let Header = null;
 
-class ActionClient extends EventEmitter {
+class ActionClientInterface extends EventEmitter {
   constructor(options) {
     super();
 
@@ -72,6 +72,16 @@ class ActionClient extends EventEmitter {
     this._goals = {};
     this._goalCallbacks = {};
     this._goalSeqNum = 0;
+  }
+
+  shutdown() {
+    return Promise.all([
+      this._goalPub.shutdown(),
+      this._cancelPub.shutdown(),
+      this._statusSub.shutdown(),
+      this._feedbackSub.shutdown(),
+      this._resultSub.shutdown(),
+    ]);
   }
 
   _handleStatus(msg) {
@@ -140,4 +150,4 @@ class ActionClient extends EventEmitter {
   }
 }
 
-module.exports = ActionClient;
+module.exports = ActionClientInterface;
